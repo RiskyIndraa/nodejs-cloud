@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__(__dirname, 'public'))));
 
 // Endpoint API Gateway Anda (nanti diganti dengan URL API Gateway yang asli saat lomba)
-const API_GATEWAY_URL = process.env.API_URL || 'https://your-api-gateway-url.amazonaws.com/prod/tickets';
+const API_GATEWAY_URL = process.env.API_URL || 'https://abv7urx904.execute-api.us-east-1.amazonaws.com/prod';
 
 // Route utama untuk menyajikan halaman Frontend E-Commerce
 app.get('/', (req, res) => {
