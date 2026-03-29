@@ -58,7 +58,7 @@
             try {
                 // Front-end UI memanggil server Node.js lokal kita
                 // Dan server Node.js lokal kita akan meneruskannya ke API Gateway AWS
-                const res = await fetch('/api/book-ticket', {
+                const res = await fetch('https://abv7urx904.execute-api.us-east-1.amazonaws.com/prod/book-ticket', {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ customer_name: name, ticket_type: type })
