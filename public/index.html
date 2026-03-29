@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal - Event Tickets (Node.js Frontend)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        .header { background-color: #232f3e; color: white; padding: 20px; text-align: center; }
+        .container { max-width: 600px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #ff9900; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold;}
+        button:hover { background-color: #e68a00; }
+        #responseArea { margin-top: 20px; padding: 15px; background-color: #e9ecef; border-radius: 4px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Cloud Event Tickets 2026</h1>
+        <p>Web Aplikasi Frontend Berbasis Node.js (Express)</p>
+    </div>
+    
+    <div class="container">
+        <h2>Pesan Tiket Serverless</h2>
+        <div class="form-group">
+            <label>Nama Customer:</label>
+            <input type="text" id="custName" placeholder="Masukkan nama pemesan tiket">
+        </div>
+        <div class="form-group">
+            <label>Kategori Tiket:</label>
+            <select id="ticketType">
+                <option value="REGULAR">Regular - Rp 150.000</option>
+                <option value="VIP">VIP - Rp 500.000</option>
+                <option value="VVIP">VVIP - Rp 1.500.000</option>
+            </select>
+        </div>
+        <button onclick="bookTicket()">Pesan Sekarang</button>
+
+        <div id="responseArea"></div>
+    </div>
+
+    <script>
+        async function bookTicket() {
+            const name = document.getElementById("custName").value;
+            const type = document.getElementById("ticketType").value;
+            const responseArea = document.getElementById("responseArea");
+
+            if(!name) {
+                alert("Mohon isi field nama customer."); 
+                return;
+            }
+
+            responseArea.style.display = "block";
+            responseArea.innerHTML = "<em>Memproses pesanan melalui Node.js Backend for Frontend...</em>";
+
+            try {
+                // Front-end UI memanggil server Node.js lokal kita
+                // Dan server Node.js lokal kita akan meneruskannya ke API Gateway AWS
+                const res = await fetch('/api/book-ticket', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ customer_name: name, ticket_type: type })
+                });
+                
+                const data = await res.json();
+                if(res.ok) {
+                    responseArea.innerHTML = `<span style='color:green'><b>Sukses!</b><br>Transaksi berhasil diroute dari Node.js Frontend ke API Gateway -> AWS Step Functions -> Lambda.<br><br><b>Transaction ID/Pesan:</b> ${data.message || data.transaction_id || JSON.stringify(data)}</span>`;
+                } else {
+                    responseArea.innerHTML = `<span style='color:red'><b>Gagal:</b> ${data.error || JSON.stringify(data)}</span>`;
+                }
+            } catch (error) {
+                responseArea.innerHTML = `<span style='color:red'>Kesalahan Jaringan: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
